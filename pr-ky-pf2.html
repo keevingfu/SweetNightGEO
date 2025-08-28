@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SweetNight - AI Search Keyword Performance Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px 30px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        th {
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #334155;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s;
+        }
+        
+        th:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        th.sortable::after {
+            content: ' ↕';
+            opacity: 0.3;
+            font-size: 12px;
+        }
+        
+        th.sorted-asc::after {
+            content: ' ↑';
+            opacity: 1;
+            color: #667eea;
+        }
+        
+        th.sorted-desc::after {
+            content: ' ↓';
+            opacity: 1;
+            color: #667eea;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.2s;
+        }
+        
+        tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        td {
+            padding: 12px;
+            color: #475569;
+        }
+        
+        .keyword-cell {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .rank-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            min-width: 35px;
+        }
+        
+        .rank-top10 {
+            background: #10b981;
+            color: white;
+        }
+        
+        .rank-top20 {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .rank-top30 {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .rank-below30 {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .volume-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .volume-visual {
+            height: 6px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        
+        .ctr-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .ctr-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .ctr-high { background: #10b981; }
+        .ctr-medium { background: #f59e0b; }
+        .ctr-low { background: #ef4444; }
+        
+        .difficulty-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .difficulty-bar {
+            width: 60px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .difficulty-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+        
+        .difficulty-low { background: #10b981; }
+        .difficulty-medium { background: #f59e0b; }
+        .difficulty-high { background: #ef4444; }
+        
+        .value-cell {
+            font-weight: 600;
+            color: #059669;
+        }
+        
+        .filters {
+            padding: 20px 30px;
+            background: #fafbfc;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        select, input {
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            color: #334155;
+            cursor: pointer;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-box {
+            min-width: 250px;
+        }
+        
+        .legend {
+            padding: 20px 30px;
+            background: #f8fafc;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .legend-icon {
+            width: 20px;
+            height: 12px;
+            border-radius: 6px;
+        }
+        
+        @media (max-width: 768px) {
+            .table-container {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 8px;
+                font-size: 12px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .highlight-animation {
+            animation: highlight 2s ease-in-out;
+        }
+        
+        @keyframes highlight {
+            0%, 100% { background: transparent; }
+            50% { background: rgba(102, 126, 234, 0.2); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛏️ SweetNight Keyword Performance Analysis</h1>
+            <p>AI Search Engine Optimization & Mattress Industry Keywords Dashboard</p>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">36</div>
+                <div class="stat-label">Total Keywords</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">1.24M</div>
+                <div class="stat-label">Monthly Searches</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">$32,420</div>
+                <div class="stat-label">Total Traffic Value</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">18.2</div>
+                <div class="stat-label">Avg. Position</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">7.8%</div>
+                <div class="stat-label">Avg. CTR</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">48.6</div>
+                <div class="stat-label">Avg. Difficulty</div>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label class="filter-label">Search:</label>
+                <input type="text" id="searchInput" class="search-box" placeholder="Type to search keywords...">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Rank:</label>
+                <select id="rankFilter">
+                    <option value="">All Positions</option>
+                    <option value="1-10">Top 10</option>
+                    <option value="11-20">11-20</option>
+                    <option value="21-30">21-30</option>
+                    <option value="31+">31+</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Difficulty:</label>
+                <select id="difficultyFilter">
+                    <option value="">All Levels</option>
+                    <option value="low">Low (0-30)</option>
+                    <option value="medium">Medium (31-60)</option>
+                    <option value="high">High (61-100)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="keywordTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-column="keyword">Keyword</th>
+                        <th class="sortable" data-column="rank">Avg. Position</th>
+                        <th class="sortable" data-column="volume">Search Volume/mo</th>
+                        <th class="sortable" data-column="ctr">CTR</th>
+                        <th class="sortable" data-column="difficulty">Keyword Difficulty</th>
+                        <th class="sortable" data-column="value">Traffic Value $/mo</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-icon rank-top10"></div>
+                <span>Top 10 Rankings</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon rank-top20"></div>
+                <span>Rankings 11-20</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon rank-top30"></div>
+                <span>Rankings 21-30</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon rank-below30"></div>
+                <span>Rankings 31+</span>
+            </div>
+            <div class="legend-item">
+                <div class="ctr-dot ctr-high" style="display: inline-block;"></div>
+                <span>High CTR (>2%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="ctr-dot ctr-medium" style="display: inline-block;"></div>
+                <span>Medium CTR (1-2%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="ctr-dot ctr-low" style="display: inline-block;"></div>
+                <span>Low CTR (<1%)</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const rawData = `SweetNight mattress,2,12500,28.5%,15,3200
+best cooling mattress,5,45000,12.2%,68,2800
+memory foam mattress,18,165000,2.4%,82,2400
+cooling mattress for hot sleepers,8,28500,8.8%,65,2200
+CoolNest technology,3,2100,22.1%,25,1800
+5-zone support mattress,6,8900,15.5%,45,1600
+back pain relief mattress,12,22200,6.2%,58,1400
+side sleeper mattress,15,18100,4.8%,55,1200
+mattress free trial,20,33100,3.2%,62,1100
+SweetNight vs Tempur-Pedic,4,3600,18.5%,38,980
+affordable cooling mattress,10,14800,7.8%,48,920
+temperature regulating mattress,14,9900,5.2%,52,880
+bed in a box,22,49500,2.6%,72,820
+Contouring Curve technology,2,1240,32.1%,12,780
+pressure relief mattress,16,12100,4.3%,58,720
+hybrid mattress,25,27100,2.2%,68,680
+medium firm mattress,18,18400,3.8%,61,640
+mattress for couples,20,8100,3.2%,55,580
+sweetnight reviews,3,5600,22.8%,28,520
+mattress warranty,28,6600,1.8%,45,480
+gel memory foam,30,22200,1.6%,65,460
+eco-friendly mattress,24,7800,2.5%,48,440
+mattress financing,32,12100,1.4%,52,420
+sleep trial,26,9900,2.0%,42,400
+queen size mattress,35,74000,1.2%,75,380
+king size mattress,38,45000,1.0%,72,360
+twin mattress,40,28600,0.8%,67,340
+mattress topper cooling,22,15600,2.6%,61,320
+SweetNight coupon,5,2900,16.8%,22,300
+mattress comparison,28,8900,1.8%,55,280
+CertiPUR-US certified,15,4400,4.8%,35,260
+mattress unboxing,30,6600,1.6%,45,240
+SweetNight warranty,8,2400,10.2%,28,220
+anti-microbial mattress,25,3100,2.2%,48,200
+motion isolation,20,5400,3.2%,42,180
+edge support,18,4200,3.8%,38,160`;
+
+        let data = rawData.split('\n').map(row => {
+            const [keyword, rank, volume, ctr, difficulty, value] = row.split(',');
+            return {
+                keyword,
+                rank: parseInt(rank),
+                volume: parseInt(volume),
+                ctr: parseFloat(ctr),
+                difficulty: parseInt(difficulty),
+                value: parseInt(value)
+            };
+        });
+
+        let currentData = [...data];
+        let sortColumn = 'value';
+        let sortDirection = 'desc';
+
+        function getRankClass(rank) {
+            if (rank <= 10) return 'rank-top10';
+            if (rank <= 20) return 'rank-top20';
+            if (rank <= 30) return 'rank-top30';
+            return 'rank-below30';
+        }
+
+        function getCTRClass(ctr) {
+            if (ctr >= 2) return 'ctr-high';
+            if (ctr >= 1) return 'ctr-medium';
+            return 'ctr-low';
+        }
+
+        function getDifficultyClass(difficulty) {
+            if (difficulty <= 30) return 'difficulty-low';
+            if (difficulty <= 60) return 'difficulty-medium';
+            return 'difficulty-high';
+        }
+
+        function renderTable(dataToRender) {
+            const maxVolume = Math.max(...data.map(d => d.volume));
+            const tbody = document.getElementById('tableBody');
+            
+            tbody.innerHTML = dataToRender.map(item => `
+                <tr>
+                    <td class="keyword-cell">${item.keyword}</td>
+                    <td><span class="rank-badge ${getRankClass(item.rank)}">#${item.rank}</span></td>
+                    <td>
+                        <div class="volume-bar">
+                            <span>${item.volume.toLocaleString()}</span>
+                            <div class="volume-visual" style="width: ${(item.volume / maxVolume) * 100}px;"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="ctr-indicator">
+                            <div class="ctr-dot ${getCTRClass(item.ctr)}"></div>
+                            <span>${item.ctr}%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="difficulty-meter">
+                            <span>${item.difficulty}</span>
+                            <div class="difficulty-bar">
+                                <div class="difficulty-fill ${getDifficultyClass(item.difficulty)}" 
+                                     style="width: ${item.difficulty}%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="value-cell">$${item.value.toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function sortData(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = column === 'keyword' ? 'asc' : 'desc';
+            }
+
+            currentData.sort((a, b) => {
+                let valueA = a[column];
+                let valueB = b[column];
+                
+                if (column === 'keyword') {
+                    valueA = valueA.toLowerCase();
+                    valueB = valueB.toLowerCase();
+                }
+                
+                if (sortDirection === 'asc') {
+                    return valueA > valueB ? 1 : -1;
+                } else {
+                    return valueA < valueB ? 1 : -1;
+                }
+            });
+
+            // Update header classes
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+                if (th.dataset.column === column) {
+                    th.classList.add(`sorted-${sortDirection}`);
+                }
+            });
+
+            renderTable(currentData);
+        }
+
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rankFilter = document.getElementById('rankFilter').value;
+            const difficultyFilter = document.getElementById('difficultyFilter').value;
+            
+            currentData = data.filter(item => {
+                let matchesSearch = item.keyword.toLowerCase().includes(searchTerm);
+                
+                let matchesRank = true;
+                if (rankFilter) {
+                    if (rankFilter === '1-10') matchesRank = item.rank <= 10;
+                    else if (rankFilter === '11-20') matchesRank = item.rank > 10 && item.rank <= 20;
+                    else if (rankFilter === '21-30') matchesRank = item.rank > 20 && item.rank <= 30;
+                    else if (rankFilter === '31+') matchesRank = item.rank > 30;
+                }
+                
+                let matchesDifficulty = true;
+                if (difficultyFilter) {
+                    if (difficultyFilter === 'low') matchesDifficulty = item.difficulty <= 30;
+                    else if (difficultyFilter === 'medium') matchesDifficulty = item.difficulty > 30 && item.difficulty <= 60;
+                    else if (difficultyFilter === 'high') matchesDifficulty = item.difficulty > 60;
+                }
+                
+                return matchesSearch && matchesRank && matchesDifficulty;
+            });
+            
+            sortData(sortColumn);
+        }
+
+        // Event listeners
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => sortData(th.dataset.column));
+        });
+
+        document.getElementById('searchInput').addEventListener('input', filterData);
+        document.getElementById('rankFilter').addEventListener('change', filterData);
+        document.getElementById('difficultyFilter').addEventListener('change', filterData);
+
+        // Initial render
+        sortData('value');
+    </script>
+</body>
+</html>
