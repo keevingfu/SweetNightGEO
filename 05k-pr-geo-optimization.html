@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PR GEO Intelligent Optimization Platform - AI Citation Optimization System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366F1;
+            --secondary: #8B5CF6;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --dark: #1F2937;
+            --gray: #6B7280;
+            --light: #F9FAFB;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --ai-blue: #0EA5E9;
+            --ai-purple: #A855F7;
+            --geo-green: #22C55E;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0E7FF 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            transition: all 0.3s;
+            font-weight: bold;
+            color: var(--gray);
+        }
+
+        .step.active .step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        .step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: var(--white);
+        }
+
+        .step-label {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .step.active .step-label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Main Content Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        /* Badge */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-primary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* Button */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #5558E3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background: var(--white);
+            border: 1px solid var(--border);
+            color: var(--dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--light);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Textarea */
+        .textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Input */
+        .input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        /* Score Display */
+        .score-display {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-circle-bg {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 10;
+        }
+
+        .score-circle-progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .score-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 10px;
+        }
+
+        /* Evaluation Grid */
+        .evaluation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .evaluation-item {
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .evaluation-label {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .evaluation-score {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .evaluation-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .evaluation-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-left: 15px;
+            overflow: hidden;
+        }
+
+        .evaluation-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Suggestions */
+        .suggestions-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .suggestion-item {
+            padding: 12px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+
+        .suggestion-item:hover {
+            background: rgba(99, 102, 241, 0.05);
+            transform: translateX(5px);
+        }
+
+        .suggestion-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .suggestion-content {
+            flex: 1;
+        }
+
+        .suggestion-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        .suggestion-desc {
+            font-size: 13px;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        .suggestion-impact {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        /* Platform Tabs */
+        .platform-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .platform-tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray);
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .platform-tab:hover {
+            color: var(--primary);
+        }
+
+        .platform-tab.active {
+            color: var(--primary);
+        }
+
+        .platform-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .platform-icon {
+            font-size: 16px;
+        }
+
+        /* Output Preview */
+        .output-preview {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .output-section {
+            margin-bottom: 20px;
+        }
+
+        .output-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .output-label {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .output-content {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .faq-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .faq-answer {
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: var(--light);
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid var(--border);
+        }
+
+        .comparison-table td {
+            padding: 10px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .list-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-number {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .json-code {
+            background: #1F2937;
+            color: #10B981;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Alert */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: var(--dark);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--gray);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .evaluation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .platform-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .steps {
+                flex-direction: column;
+            }
+
+            .steps::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🚀</div>
+                <span>PR GEO Intelligent Optimization Platform</span>
+                <span class="badge badge-primary">AI Citation Optimization System v3.0</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline">
+                    📊 History
+                </button>
+                <button class="btn btn-primary">
+                    ⬇️ Export Report
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <div class="steps">
+                <div class="step active" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Input PR Content</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">AI Review & Scoring</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Optimization Suggestions</div>
+                </div>
+                <div class="step" id="step4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">GEO Structured Output</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Column - Input & Evaluation -->
+            <div>
+                <!-- Input Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span>📝</span>
+                            PR Content Input
+                        </h3>
+                        <button class="btn btn-outline btn-sm" onclick="loadSample()">
+                            Load Sample
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label class="form-label">Article Title</label>
+                            <input type="text" class="input" id="prTitle" placeholder="Enter PR article title..." value="">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Article Content</label>
+                            <textarea class="textarea" id="prContent" placeholder="Paste or enter PR article content..." style="min-height: 300px;"></textarea>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="evaluatePR()">
+                                <span id="evaluateBtn">🎯 Start AI Review</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearInput()">
+                                Clear Content
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evaluation Results -->
+                <div class="card" id="evaluationCard" style="display: none; margin-top: 20px;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span>📊</span>
+                            AI Review Results
+                        </h3>
+                        <span class="badge badge-success">Review Complete</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <svg width="150" height="150">
+                                    <circle cx="75" cy="75" r="65" class="score-circle-bg"></circle>
+                                    <circle cx="75" cy="75" r="65" class="score-circle-progress" 
+                                            stroke-dasharray="408" 
+                                            stroke-dashoffset="102"
+                                            id="scoreCircle"></circle>
+                                </svg>
+                                <div class="score-value" id="scoreValue">75</div>
+                            </div>
+                            <div class="score-label">AI Citation Friendliness Score</div>
+                        </div>
+
+                        <div class="evaluation-grid">
+                            <div class="evaluation-item">
+                                <div class="evaluation-label">Structure Score</div>
+                                <div class="evaluation-score">
+                                    <span class="evaluation-value">82%</span>
+                                    <div class="evaluation-bar">
+                                        <div class="evaluation-fill" style="width: 82%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="evaluation-item">
+                                <div class="evaluation-label">Keyword Density</div>
+                                <div class="evaluation-score">
+                                    <span class="evaluation-value">78%</span>
+                                    <div class="evaluation-bar">
+                                        <div class="evaluation-fill" style="width: 78%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="evaluation-item">
+                                <div class="evaluation-label">Information Completeness</div>
+                                <div class="evaluation-score">
+                                    <span class="evaluation-value">85%</span>
+                                    <div class="evaluation-bar">
+                                        <div class="evaluation-fill" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="evaluation-item">
+                                <div class="evaluation-label">Citation Potential</div>
+                                <div class="evaluation-score">
+                                    <span class="evaluation-value">72%</span>
+                                    <div class="evaluation-bar">
+                                        <div class="evaluation-fill" style="width: 72%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optimization Suggestions -->
+                <div class="card" id="suggestionsCard" style="display: none; margin-top: 20px;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span>💡</span>
+                            Optimization Suggestions
+                        </h3>
+                        <span class="badge badge-warning">5 Suggestions</span>
+                    </div>
+                    <div class="card-content">
+                        <ul class="suggestions-list">
+                            <li class="suggestion-item">
+                                <div class="suggestion-icon">1</div>
+                                <div class="suggestion-content">
+                                    <div class="suggestion-title">Add FAQ Structured Section</div>
+                                    <div class="suggestion-desc">Organize core information into 5-8 common questions and answers to improve AI extraction and citation probability</div>
+                                    <span class="suggestion-impact">Expected Improvement +25%</span>
+                                </div>
+                            </li>
+                            <li class="suggestion-item">
+                                <div class="suggestion-icon">2</div>
+                                <div class="suggestion-content">
+                                    <div class="suggestion-title">Add Data Comparison Tables</div>
+                                    <div class="suggestion-desc">Add comparison tables for product parameters and performance metrics to facilitate AI understanding and citation</div>
+                                    <span class="suggestion-impact">Expected Improvement +18%</span>
+                                </div>
+                            </li>
+                            <li class="suggestion-item">
+                                <div class="suggestion-icon">3</div>
+                                <div class="suggestion-content">
+                                    <div class="suggestion-title">Optimize Heading Structure</div>
+                                    <div class="suggestion-desc">Use clear H2 and H3 heading hierarchy, with each paragraph focusing on a single topic</div>
+                                    <span class="suggestion-impact">Expected Improvement +15%</span>
+                                </div>
+                            </li>
+                            <li class="suggestion-item">
+                                <div class="suggestion-icon">4</div>
+                                <div class="suggestion-content">
+                                    <div class="suggestion-title">Add Long-tail Keywords</div>
+                                    <div class="suggestion-desc">Include long-tail keywords like "how to choose", "comparison review", "user guide", etc.</div>
+                                    <span class="suggestion-impact">Expected Improvement +12%</span>
+                                </div>
+                            </li>
+                            <li class="suggestion-item">
+                                <div class="suggestion-icon">5</div>
+                                <div class="suggestion-content">
+                                    <div class="suggestion-title">Add Expert Quotes and Certifications</div>
+                                    <div class="suggestion-desc">Include industry expert opinions and authoritative certification information to enhance content credibility</div>
+                                    <span class="suggestion-impact">Expected Improvement +10%</span>
+                                </div>
+                            </li>
+                        </ul>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="applyOptimizations()">
+                            ✨ Apply Optimizations and Generate GEO Content
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - GEO Output -->
+            <div>
+                <!-- Platform Selection -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span>🌐</span>
+                            GEO Structured Output
+                        </h3>
+                        <span class="badge badge-info" id="outputStatus">Pending</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="platform-tabs">
+                            <button class="platform-tab active" onclick="switchPlatform('reddit')">
+                                <span class="platform-icon">📢</span>
+                                Reddit
+                            </button>
+                            <button class="platform-tab" onclick="switchPlatform('medium')">
+                                <span class="platform-icon">📝</span>
+                                Medium
+                            </button>
+                            <button class="platform-tab" onclick="switchPlatform('youtube')">
+                                <span class="platform-icon">🎥</span>
+                                YouTube
+                            </button>
+                            <button class="platform-tab" onclick="switchPlatform('quora')">
+                                <span class="platform-icon">❓</span>
+                                Quora
+                            </button>
+                            <button class="platform-tab" onclick="switchPlatform('wiki')">
+                                <span class="platform-icon">📚</span>
+                                Wiki
+                            </button>
+                            <button class="platform-tab" onclick="switchPlatform('blog')">
+                                <span class="platform-icon">🌟</span>
+                                Official Blog
+                            </button>
+                        </div>
+
+                        <div id="platformOutput">
+                            <div class="alert alert-info">
+                                👆 Please complete the PR content review first, then select a target platform to view GEO optimized output
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="stats-grid" id="statsGrid" style="display: none;">
+                    <div class="stat-card">
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">Platform Coverage</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">95%</div>
+                        <div class="stat-label">AI Friendliness</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Structured Modules</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">+45%</div>
+                        <div class="stat-label">Expected Improvement</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample PR content
+        const samplePR = {
+            title: "Innovative Tech Company Launches Next-Generation Smart Sleep Monitoring System, Revolutionizing Sleep Health Management",
+            content: `[January 15, 2024, Beijing] A global leading sleep technology company today officially launched its latest smart sleep monitoring system, SleepGuard Pro. The system uses advanced biosensing technology and artificial intelligence algorithms to provide users with comprehensive sleep health management solutions.
+
+The new product features proprietary micro-motion sensing technology that can accurately monitor users' heart rate, breathing frequency, body movement and other physiological indicators without physical contact. The system's AI algorithm can analyze sleep data in real-time, identify sleep stages, and provide personalized sleep improvement recommendations.
+
+Key product features include: Non-contact monitoring design that doesn't affect normal sleep; Medical-grade data collection accuracy with error rate below 2%; Smart sleep environment optimization with automatic adjustment of room temperature, humidity and lighting; Personalized sleep reports with daily health recommendations; Multi-user support capable of monitoring two people's sleep simultaneously.
+
+The company CEO stated: "The launch of SleepGuard Pro marks the entry of sleep health management into a new era of intelligence. Through this product, we hope everyone can enjoy professional-grade sleep health services."
+
+The product is expected to officially launch in Q2 2024 with a suggested retail price of $2,999. Early pre-order customers can enjoy a 20% discount.`
+        };
+
+        // Current platform
+        let currentPlatform = 'reddit';
+        let isOptimized = false;
+
+        // Load sample content
+        function loadSample() {
+            document.getElementById('prTitle').value = samplePR.title;
+            document.getElementById('prContent').value = samplePR.content;
+        }
+
+        // Clear input
+        function clearInput() {
+            document.getElementById('prTitle').value = '';
+            document.getElementById('prContent').value = '';
+            document.getElementById('evaluationCard').style.display = 'none';
+            document.getElementById('suggestionsCard').style.display = 'none';
+            document.getElementById('platformOutput').innerHTML = `
+                <div class="alert alert-info">
+                    👆 Please complete the PR content review first, then select a target platform to view GEO optimized output
+                </div>
+            `;
+            document.getElementById('statsGrid').style.display = 'none';
+            resetSteps();
+        }
+
+        // Evaluate PR content
+        function evaluatePR() {
+            const title = document.getElementById('prTitle').value;
+            const content = document.getElementById('prContent').value;
+
+            if (!title || !content) {
+                alert('Please enter PR article title and content');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('evaluateBtn').innerHTML = '<span class="loading"></span> Reviewing...';
+
+            setTimeout(() => {
+                // Show evaluation results
+                document.getElementById('evaluationCard').style.display = 'block';
+                document.getElementById('suggestionsCard').style.display = 'block';
+                
+                // Update steps
+                document.getElementById('step2').classList.add('active');
+                document.getElementById('step1').classList.add('completed');
+                document.getElementById('step3').classList.add('active');
+                document.getElementById('step2').classList.add('completed');
+
+                // Animate score
+                animateScore();
+
+                // Reset button
+                document.getElementById('evaluateBtn').innerHTML = '🎯 Start AI Review';
+
+                // Scroll to results
+                document.getElementById('evaluationCard').scrollIntoView({ behavior: 'smooth' });
+            }, 1500);
+        }
+
+        // Apply optimizations
+        function applyOptimizations() {
+            isOptimized = true;
+            document.getElementById('step4').classList.add('active');
+            document.getElementById('step3').classList.add('completed');
+            document.getElementById('outputStatus').textContent = 'Generated';
+            document.getElementById('outputStatus').className = 'badge badge-success';
+            document.getElementById('statsGrid').style.display = 'grid';
+            updatePlatformOutput(currentPlatform);
+            
+            // Scroll to output
+            document.getElementById('platformOutput').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Switch platform
+        function switchPlatform(platform) {
+            currentPlatform = platform;
+            
+            // Update tab styles
+            document.querySelectorAll('.platform-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.closest('.platform-tab').classList.add('active');
+
+            // Update output
+            if (isOptimized) {
+                updatePlatformOutput(platform);
+            }
+        }
+
+        // Update platform output
+        function updatePlatformOutput(platform) {
+            const outputs = {
+                reddit: `
+                    <div class="output-preview">
+                        <div class="output-section">
+                            <div class="output-label">📌 Reddit Title Optimization</div>
+                            <div class="output-content">
+                                [Review] I've been using SleepGuard Pro Smart Sleep Monitoring System for 3 months - Real Experience Sharing (with Data Comparison)
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">📝 Post Content (FAQ Structure)</div>
+                            <div class="output-content">
+                                <div class="faq-item">
+                                    <div class="faq-question">Q: What is SleepGuard Pro? What makes it special?</div>
+                                    <div class="faq-answer">A: It's a non-contact smart sleep monitoring system. The biggest feature is that it can monitor heart rate, breathing, and body movement without wearing any device. I used Apple Watch and Fitbit before, but they're uncomfortable to wear while sleeping. This completely solves that problem.</div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question">Q: How accurate is the monitoring? Is it reliable?</div>
+                                    <div class="faq-answer">A: The official error rate is below 2%. I've compared it with hospital sleep monitoring reports, and it's indeed very accurate. Especially for REM sleep and deep sleep recognition, they're basically consistent.</div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question">Q: How's the price? Is it good value for money?</div>
+                                    <div class="faq-answer">A: The official price is $2999, currently 20% off pre-order at $2399. Compared to other brands (Withings Sleep is $129), it's quite a bit more expensive, but the features are indeed much more powerful. If you value sleep health, I think it's worth the investment.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">🏷️ Tag Optimization</div>
+                            <div class="output-content">
+                                r/sleep, r/sleephealth, r/quantifiedself, r/gadgets, r/smarthome
+                            </div>
+                        </div>
+                    </div>
+                `,
+                medium: `
+                    <div class="output-preview">
+                        <div class="output-section">
+                            <div class="output-label">📰 Medium Title</div>
+                            <div class="output-content">
+                                How AI-Powered Sleep Monitoring is Revolutionizing Personal Health: A Deep Dive into SleepGuard Pro
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">📊 Structured Outline</div>
+                            <div class="output-content">
+                                <div class="list-item">
+                                    <span class="list-number">1</span>
+                                    <div>
+                                        <strong>The Sleep Crisis: Why We Need Better Monitoring</strong><br>
+                                        <span style="color: var(--gray); font-size: 12px;">Statistics: 30% of adults worldwide have sleep problems</span>
+                                    </div>
+                                </div>
+                                <div class="list-item">
+                                    <span class="list-number">2</span>
+                                    <div>
+                                        <strong>Technology Breakthrough: Non-Contact Monitoring</strong><br>
+                                        <span style="color: var(--gray); font-size: 12px;">Technology: How micro-motion sensing works</span>
+                                    </div>
+                                </div>
+                                <div class="list-item">
+                                    <span class="list-number">3</span>
+                                    <div>
+                                        <strong>Real-World Performance: 3-Month Testing Results</strong><br>
+                                        <span style="color: var(--gray); font-size: 12px;">Data comparison: Accuracy vs medical-grade devices</span>
+                                    </div>
+                                </div>
+                                <div class="list-item">
+                                    <span class="list-number">4</span>
+                                    <div>
+                                        <strong>Market Comparison: SleepGuard Pro vs. Competitors</strong><br>
+                                        <span style="color: var(--gray); font-size: 12px;">Feature comparison: 5 mainstream products reviewed</span>
+                                    </div>
+                                </div>
+                                <div class="list-item">
+                                    <span class="list-number">5</span>
+                                    <div>
+                                        <strong>The Future of Sleep Health Management</strong><br>
+                                        <span style="color: var(--gray); font-size: 12px;">Industry trends: AI applications in health management</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">🏷️ Tag Suggestions</div>
+                            <div class="output-content">
+                                Sleep Technology, Health Tech, AI, Quantified Self, Product Review
+                            </div>
+                        </div>
+                    </div>
+                `,
+                youtube: `
+                    <div class="output-preview">
+                        <div class="output-section">
+                            <div class="output-label">🎬 YouTube Title</div>
+                            <div class="output-content">
+                                SleepGuard Pro In-Depth Review: Is the $2999 AI Sleep Monitor Worth It? [3 Months Real Experience]
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">📝 Video Description (Timestamp Structure)</div>
+                            <div class="output-content">
+                                📌 Video Chapters:<br><br>
+                                00:00 Unboxing & First Impressions<br>
+                                02:15 Installation & Setup Tutorial<br>
+                                04:30 Core Features Demo<br>
+                                07:45 3-Month Usage Data Sharing<br>
+                                10:20 Comparison with Apple Watch/Fitbit<br>
+                                13:00 Pros and Cons Summary<br>
+                                15:30 Purchase Advice & Discount Info<br><br>
+                                
+                                🔍 Product Highlights:<br>
+                                ✅ Non-contact monitoring, zero sleep disturbance<br>
+                                ✅ Medical-grade accuracy, error rate <2%<br>
+                                ✅ AI intelligent analysis, personalized recommendations<br>
+                                ✅ Supports dual-person monitoring<br><br>
+                                
+                                💰 Price Information:<br>
+                                Official Price: $2999<br>
+                                Pre-order Price: $2399 (20% off)<br>
+                                Launch Date: Q2 2024
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">🏷️ Tag Optimization</div>
+                            <div class="output-content">
+                                sleep monitoring, SleepGuard Pro review, smart sleep system, sleep quality improvement, smart home, health tech, product review 2024
+                            </div>
+                        </div>
+                    </div>
+                `,
+                quora: `
+                    <div class="output-preview">
+                        <div class="output-section">
+                            <div class="output-label">❓ Quora Question</div>
+                            <div class="output-content">
+                                What are the best non-contact sleep monitoring devices in 2024?
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">📝 Professional Answer</div>
+                            <div class="output-content">
+                                <strong>Based on 3 months of testing, here's my comprehensive analysis:</strong><br><br>
+                                
+                                <strong>Top Pick: SleepGuard Pro</strong><br>
+                                • <strong>Technology:</strong> Advanced micro-motion sensing + AI algorithms<br>
+                                • <strong>Accuracy:</strong> <2% error rate (validated against medical-grade polysomnography)<br>
+                                • <strong>Key Features:</strong> Non-contact monitoring, dual-person tracking, environmental optimization<br>
+                                • <strong>Price:</strong> $399 USD (¥2999 CNY)<br><br>
+                                
+                                <strong>Comparison with alternatives:</strong><br>
+                                1. <strong>Withings Sleep Analyzer:</strong> $129, basic metrics only<br>
+                                2. <strong>Emfit QS:</strong> $299, focuses on HRV<br>
+                                3. <strong>Beautyrest Sleeptracker:</strong> $199, limited AI features<br><br>
+                                
+                                <strong>Why SleepGuard Pro stands out:</strong><br>
+                                The AI-powered analysis provides actionable insights that actually improved my sleep quality by 23% over 3 months. The non-contact design means zero disruption to natural sleep patterns.
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">🔗 Related Questions</div>
+                            <div class="output-content">
+                                • How accurate are non-wearable sleep trackers?<br>
+                                • Is AI sleep monitoring worth the investment?<br>
+                                • What's the difference between consumer and medical sleep monitors?
+                            </div>
+                        </div>
+                    </div>
+                `,
+                wiki: `
+                    <div class="output-preview">
+                        <div class="output-section">
+                            <div class="output-label">📚 Wiki-style Structured Content</div>
+                            <div class="output-content">
+                                <strong>SleepGuard Pro</strong><br><br>
+                                
+                                <div style="background: var(--light); padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+                                    <strong>Overview</strong><br>
+                                    SleepGuard Pro is a non-contact smart sleep monitoring system released by [Company Name] in 2024. The system uses micro-motion sensing technology and artificial intelligence algorithms to provide medical-grade accuracy sleep health management services.
+                                </div>
+                                
+                                <strong>Technical Specifications</strong><br>
+                                <table class="comparison-table">
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Specification</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Monitoring Method</td>
+                                        <td>Non-contact micro-motion sensing</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Accuracy</td>
+                                        <td>Error rate <2%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Monitoring Metrics</td>
+                                        <td>Heart rate, breathing, body movement, sleep stages</td>
+                                    </tr>
+                                    <tr>
+                                        <td>User Support</td>
+                                        <td>Dual-person simultaneous monitoring</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Price</td>
+                                        <td>$2999 (Suggested retail price)</td>
+                                    </tr>
+                                </table><br>
+                                
+                                <strong>Main Features</strong><br>
+                                1. Real-time sleep stage recognition<br>
+                                2. Personalized sleep improvement recommendations<br>
+                                3. Environmental optimization control<br>
+                                4. Health data trend analysis<br>
+                                5. Multi-user management system
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">🔗 Reference Links</div>
+                            <div class="output-content">
+                                [1] Official Product Page<br>
+                                [2] Technical White Paper<br>
+                                [3] Clinical Validation Report
+                            </div>
+                        </div>
+                    </div>
+                `,
+                blog: `
+                    <div class="output-preview">
+                        <div class="output-section">
+                            <div class="output-label">📝 Official Blog Title</div>
+                            <div class="output-content">
+                                Revolutionizing Sleep Health Management: How SleepGuard Pro Changes Your Sleep Quality with AI Technology
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">🔍 SEO Optimized Summary</div>
+                            <div class="output-content">
+                                Learn how SleepGuard Pro smart sleep monitoring system provides medical-grade sleep analysis through non-contact monitoring technology and AI algorithms. This article details product features, technical principles, user experience, and purchasing guide.
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">📋 JSON-LD Structured Data</div>
+                            <div class="output-content" style="position: relative;">
+                                <button class="copy-btn" onclick="copyJSON()">Copy</button>
+                                <pre class="json-code">{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "SleepGuard Pro",
+  "description": "Smart Sleep Monitoring System",
+  "brand": {
+    "@type": "Brand",
+    "name": "Innovative Tech Company"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "2999",
+    "priceCurrency": "CNY",
+    "availability": "PreOrder",
+    "priceValidUntil": "2024-06-30"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "156"
+  }
+}</pre>
+                            </div>
+                        </div>
+                        <div class="output-section">
+                            <div class="output-label">🎯 Internal Link Suggestions</div>
+                            <div class="output-content">
+                                • /blog/sleep-science-guide<br>
+                                • /products/compare<br>
+                                • /support/setup-guide<br>
+                                • /testimonials
+                            </div>
+                        </div>
+                    </div>
+                `
+            };
+
+            document.getElementById('platformOutput').innerHTML = outputs[platform] || outputs.reddit;
+        }
+
+        // Animate score circle
+        function animateScore() {
+            const score = 75;
+            const circumference = 2 * Math.PI * 65;
+            const offset = circumference - (score / 100) * circumference;
+            
+            document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+            
+            // Animate number
+            let currentScore = 0;
+            const increment = score / 30;
+            const timer = setInterval(() => {
+                currentScore += increment;
+                if (currentScore >= score) {
+                    currentScore = score;
+                    clearInterval(timer);
+                }
+                document.getElementById('scoreValue').textContent = Math.round(currentScore);
+            }, 30);
+        }
+
+        // Reset steps
+        function resetSteps() {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            document.getElementById('step1').classList.add('active');
+            isOptimized = false;
+        }
+
+        // Copy JSON
+        function copyJSON() {
+            const jsonText = document.querySelector('.json-code').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                event.target.textContent = 'Copied!';
+                setTimeout(() => {
+                    event.target.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        // Initialize
+        window.onload = function() {
+            // Auto-load sample for demo
+            loadSample();
+        };
+    </script>
+</body>
+</html>
