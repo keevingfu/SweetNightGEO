@@ -1,0 +1,48 @@
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Secrets and credentials
+*.pem
+*.key
+secrets/
+credentials/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.idea
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Build output (if any future build system is added)
+dist/
+build/
+out/
