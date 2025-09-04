@@ -1,0 +1,83 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Validate HTML
+      run: |
+        # Check for basic HTML syntax errors
+        for file in *.html; do
+          if [ -f "$file" ]; then
+            echo "Checking $file..."
+            # Check for unclosed tags
+            if grep -E '<[^>]+$' "$file"; then
+              echo "Warning: Possible unclosed tag in $file"
+            fi
+            # Check for merge conflicts
+            if grep -E '<<<<<<< HEAD|======|>>>>>>>' "$file"; then
+              echo "Error: Merge conflict markers found in $file"
+              exit 1
+            fi
+          fi
+        done
+    
+    - name: Check for sensitive data
+      run: |
+        # Ensure no tokens are committed
+        if grep -r "ghp_" --include="*.html" --include="*.js" --include="*.css" .; then
+          echo "Error: Found potential GitHub token in files!"
+          exit 1
+        fi
+    
+    - name: Check file encoding
+      run: |
+        # Ensure all files are UTF-8
+        for file in *.html; do
+          if [ -f "$file" ]; then
+            encoding=$(file -b --mime-encoding "$file")
+            if [ "$encoding" != "utf-8" ] && [ "$encoding" != "us-ascii" ]; then
+              echo "Warning: $file is not UTF-8 encoded (found: $encoding)"
+            fi
+          fi
+        done
+    
+    - name: Asset verification
+      run: |
+        # Check that referenced assets exist
+        echo "Checking for broken asset references..."
+        for file in *.html; do
+          if [ -f "$file" ]; then
+            # Extract CSS/JS references
+            grep -Eo 'href="[^"]+\.css"|src="[^"]+\.js"' "$file" | sed 's/.*"\(.*\)"/\1/' | while read -r asset; do
+              if [[ ! "$asset" =~ ^https?:// ]] && [ ! -f "$asset" ]; then
+                echo "Warning: Missing asset $asset referenced in $file"
+              fi
+            done
+          fi
+        done
+    
+  deploy-notification:
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Deployment notification
+      run: |
+        echo "✅ Code validated and pushed successfully!"
+        echo "Repository: ${{ github.repository }}"
+        echo "Branch: ${{ github.ref }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Author: ${{ github.actor }}"
+        echo "Message: ${{ github.event.head_commit.message }}"
