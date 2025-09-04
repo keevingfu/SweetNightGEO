@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **SweetNightGEO** (also branded as "Dymesty AI Glasses - Content Intelligence Center") is a comprehensive web-based content intelligence platform built as a collection of standalone HTML pages with embedded CSS and JavaScript. The platform focuses on AI-driven content management, analytics, and performance monitoring for the Dymesty AI Glasses brand.
 
+### High-Level Architecture
+- **Client-Side Only**: No backend services - all logic runs in the browser
+- **Modular Pages**: Each HTML file is self-contained with its own functionality
+- **Shared Libraries**: Common utilities in `shared-components.js` and `shared-ui-components.css`
+- **CDN Dependencies**: External libraries (ECharts, Font Awesome, AOS) loaded from CDNs
+- **Authentication**: Client-side session management using localStorage
+- **Data Visualization**: Heavy use of ECharts for analytics dashboards
+
 ## Quick Start Commands
 
 ```bash
@@ -146,6 +154,10 @@ When making changes, pay special attention to:
 - ECharts initialization and configuration
 - Navigation consistency across pages
 
+### Shared Resources
+- **`shared-components.js`**: JavaScript utility library with authentication, UI components, charts, data utilities
+- **`shared-ui-components.css`**: CSS design system with variables, components, responsive design patterns
+
 ## Navigation Structure
 
 The application uses a consistent sidebar navigation pattern across dashboard pages. The main navigation routes are:
@@ -269,6 +281,36 @@ for page in pages:
 - Mobile browsers on iOS/Android - Responsive design tested
 - **Note**: Internet Explorer not supported (uses modern CSS features)
 
+## Git Workflow
+
+### Auto-Sync Feature
+The project includes an automatic sync feature that monitors file changes and commits/pushes to GitHub automatically:
+
+```bash
+# Start auto-sync (continuous development mode)
+./start-dev.sh  # Starts both auto-sync and development server
+
+# Or use auto-sync directly:
+./scripts/auto-sync.sh watch  # Start monitoring
+./scripts/auto-sync.sh stop   # Stop monitoring
+./scripts/auto-sync.sh sync   # Manual sync
+
+# Check sync status
+tail -f .auto-sync.log
+```
+
+### Manual Git Operations
+- Pre-commit hook validates file formatting
+- Post-commit hook automatically pushes to GitHub
+- GitHub token stored in `.env` file (protected by .gitignore)
+- Alternative secure push: `./scripts/git-push-secure.sh main`
+
+### Important Files
+- **`.env`**: Contains GitHub credentials (never commit)
+- **`WORKFLOW.md`**: Detailed git workflow documentation
+- **`.auto-sync.pid`**: Process ID for running file watcher
+- **`.auto-sync.log`**: Log of automatic sync operations
+
 ## Common Issues and Solutions
 
 ### Chart Not Displaying
@@ -285,4 +327,13 @@ for page in pages:
 - Use CSS custom properties defined in `:root` for consistent theming
 - Follow the existing gradient patterns for brand consistency
 - Test responsive behavior at common breakpoints (768px, 1024px, 1400px)
+
+## Recent Pages Added
+
+### New Analytics Pages (05-series)
+- **`05l-mattress-keyword-strategy.html`**: Keyword strategy analysis for mattress content
+- **`05m-jsonld-content-strategy.html`**: JSON-LD structured data strategy dashboard
+- **`05n-competitor-keyword-analysis.html`**: Competitor keyword analysis and comparison
+
+These new pages follow the same authentication pattern and dashboard layout as existing pages.
 

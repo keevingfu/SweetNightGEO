@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyword Strategy Analysis - SweetNight GEO Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2d1;
+            --border-color: #2a3f5f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary-gradient);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .header h1 {
+            position: relative;
+            z-index: 1;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            position: relative;
+            z-index: 1;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-gradient);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .summary-card i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .summary-card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .summary-card p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Chart Section */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .chart-container:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .chart-header .info-icon {
+            color: var(--text-secondary);
+            cursor: help;
+            transition: color 0.3s ease;
+        }
+
+        .chart-header .info-icon:hover {
+            color: var(--text-primary);
+        }
+
+        .chart-box {
+            width: 100%;
+            height: 400px;
+        }
+
+        /* Chart Insights */
+        .chart-insight {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 3px solid var(--primary-gradient);
+        }
+
+        .chart-insight h4 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-insight h4 i {
+            font-size: 1rem;
+            color: #4facfe;
+        }
+
+        .insight-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .insight-recommendations {
+            list-style: none;
+            padding: 0;
+        }
+
+        .insight-recommendations li {
+            color: var(--text-secondary);
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .insight-recommendations li:before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #4facfe;
+            font-weight: bold;
+        }
+
+        /* Insights Section */
+        .insights-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        .insights-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .insights-header i {
+            font-size: 2rem;
+            margin-right: 1rem;
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .insight-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .insight-card:nth-child(1) { border-left-color: #4facfe; }
+        .insight-card:nth-child(2) { border-left-color: #43e97b; }
+        .insight-card:nth-child(3) { border-left-color: #fa709a; }
+        .insight-card:nth-child(4) { border-left-color: #f093fb; }
+
+        .insight-card:hover {
+            transform: translateX(5px);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .insight-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .insight-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Keyword Table */
+        .keyword-table-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        thead {
+            background: rgba(255,255,255,0.05);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-primary);
+            position: sticky;
+            top: 0;
+            background: var(--card-bg);
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-box {
+                height: 300px;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+        }
+
+        .loading::after {
+            content: '';
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-gradient);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Mattress Keyword Strategy Analysis</h1>
+        <p>Comprehensive Analysis of Content Optimization Strategy</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <i class="fas fa-tags"></i>
+                <h3>20</h3>
+                <p>Total Theme Categories</p>
+            </div>
+            <div class="summary-card">
+                <i class="fas fa-globe"></i>
+                <h3>150+</h3>
+                <p>English Keywords</p>
+            </div>
+            <div class="summary-card">
+                <i class="fas fa-users"></i>
+                <h3>25+</h3>
+                <p>Target Personas</p>
+            </div>
+            <div class="summary-card">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>8</h3>
+                <p>Content Positions</p>
+            </div>
+        </div>
+
+        <!-- Chart Grid -->
+        <div class="chart-grid">
+            <!-- Theme Distribution Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>Theme Category Distribution</h2>
+                    <i class="fas fa-info-circle info-icon" title="Distribution of main theme categories"></i>
+                </div>
+                <div id="themeDistributionChart" class="chart-box"></div>
+                <div class="chart-insight">
+                    <h4><i class="fas fa-lightbulb"></i> Key Insight</h4>
+                    <p class="insight-content">Support & Firmness themes dominate with 20% of content focus, indicating high customer concern about mattress feel and spinal support.</p>
+                    <ul class="insight-recommendations">
+                        <li>Prioritize content creation around medium-firm and zoned support features</li>
+                        <li>Create comparison guides for different firmness levels</li>
+                        <li>Develop interactive firmness selector tools for better engagement</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Position Heatmap -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>Content Position Heatmap</h2>
+                    <i class="fas fa-info-circle info-icon" title="Keyword usage frequency by content position"></i>
+                </div>
+                <div id="positionHeatmapChart" class="chart-box"></div>
+                <div class="chart-insight">
+                    <h4><i class="fas fa-lightbulb"></i> Key Insight</h4>
+                    <p class="insight-content">FAQ and Title positions show highest keyword density, suggesting these are critical touchpoints for search engine visibility.</p>
+                    <ul class="insight-recommendations">
+                        <li>Optimize FAQ sections with long-tail keywords for voice search</li>
+                        <li>Ensure title tags include primary sleep position keywords</li>
+                        <li>Expand Reddit presence for motion isolation discussions</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Target Persona Analysis -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>Target Persona Categories</h2>
+                    <i class="fas fa-info-circle info-icon" title="Distribution of target audience segments"></i>
+                </div>
+                <div id="personaChart" class="chart-box"></div>
+                <div class="chart-insight">
+                    <h4><i class="fas fa-lightbulb"></i> Key Insight</h4>
+                    <p class="insight-content">Side sleepers (25%) and office workers (20%) represent 45% of target audience, requiring specialized content strategies.</p>
+                    <ul class="insight-recommendations">
+                        <li>Create dedicated landing pages for side sleeper mattress solutions</li>
+                        <li>Develop content addressing work-from-home back pain relief</li>
+                        <li>Target couples with motion isolation video demonstrations</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Keyword Cloud -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>English Keyword Cloud</h2>
+                    <i class="fas fa-info-circle info-icon" title="Frequency and importance of English keywords"></i>
+                </div>
+                <div id="keywordCloudChart" class="chart-box"></div>
+                <div class="chart-insight">
+                    <h4><i class="fas fa-lightbulb"></i> Key Insight</h4>
+                    <p class="insight-content">"Memory foam", "cooling gel", and "motion isolation" are the most prominent keywords, aligning with modern mattress shopping priorities.</p>
+                    <ul class="insight-recommendations">
+                        <li>Build comprehensive guides around memory foam vs hybrid comparisons</li>
+                        <li>Create seasonal content focusing on cooling technology for summer</li>
+                        <li>Develop certification-focused content (CertiPUR-US) for trust building</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sleep Scenario Coverage -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>Sleep Scenario Coverage</h2>
+                    <i class="fas fa-info-circle info-icon" title="Coverage of different sleep positions and preferences"></i>
+                </div>
+                <div id="scenarioCoverageChart" class="chart-box"></div>
+                <div class="chart-insight">
+                    <h4><i class="fas fa-lightbulb"></i> Key Insight</h4>
+                    <p class="insight-content">Side sleeping coverage at 95% is excellent, but stomach sleeping (70%) presents an opportunity for differentiation.</p>
+                    <ul class="insight-recommendations">
+                        <li>Develop specialized content for stomach sleepers - an underserved market</li>
+                        <li>Create sleep position transition guides for changing sleep habits</li>
+                        <li>Build calculator tools for personalized sleep position recommendations</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Negative Keywords Alert -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>Negative Keywords Categories</h2>
+                    <i class="fas fa-info-circle info-icon" title="Categories of keywords to avoid"></i>
+                </div>
+                <div id="negativeKeywordsChart" class="chart-box"></div>
+                <div class="chart-insight">
+                    <h4><i class="fas fa-lightbulb"></i> Key Insight</h4>
+                    <p class="insight-content">Medical claims (25%) and competitor brands (20%) are the highest risk categories requiring careful content moderation.</p>
+                    <ul class="insight-recommendations">
+                        <li>Implement automated content screening for medical terminology</li>
+                        <li>Train content team on compliant health benefit descriptions</li>
+                        <li>Create a negative keyword monitoring dashboard for real-time alerts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights Section -->
+        <div class="insights-section">
+            <div class="insights-header">
+                <i class="fas fa-lightbulb"></i>
+                <h2>Strategic Insights</h2>
+            </div>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <h3>Content Position Strategy</h3>
+                    <p>FAQ sections show highest keyword concentration (75%), followed by Titles (60%) and Blog content (55%). This suggests FAQ optimization should be prioritized.</p>
+                </div>
+                <div class="insight-card">
+                    <h3>Target Audience Focus</h3>
+                    <p>Side sleepers and office workers represent 40% of target personas. Content should emphasize pressure relief and spinal alignment benefits.</p>
+                </div>
+                <div class="insight-card">
+                    <h3>Feature Emphasis</h3>
+                    <p>Motion isolation, cooling technology, and pressure relief are the top 3 most referenced features across all content types.</p>
+                </div>
+                <div class="insight-card">
+                    <h3>Risk Mitigation</h3>
+                    <p>Medical claims and competitor brand names are the highest risk negative keywords. Ensure all content avoids therapeutic language.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Keywords Table -->
+        <div class="keyword-table-section">
+            <h2>Top Performing Keywords by Position</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Theme</th>
+                            <th>Primary Keywords</th>
+                            <th>Best Position</th>
+                            <th>Target Persona</th>
+                            <th>Priority Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="keywordTableBody">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        const authToken = localStorage.getItem('authToken');
+        const sessionExpiry = localStorage.getItem('sessionExpiry');
+        const currentTime = new Date().getTime();
+
+        if (!authToken || !sessionExpiry || currentTime > parseInt(sessionExpiry)) {
+            window.location.href = 'login.html';
+        }
+
+        // Keyword Strategy Data
+        const keywordData = [
+            {
+                theme: "Sleep Position & Fit",
+                subtheme: "Side/Back/Stomach Sleep",
+                keywords: ["side sleeper", "back sleeper", "stomach sleeper", "all sleeping positions"],
+                positions: ["Title", "FAQ", "JSON-LD", "Dialogue Script"],
+                personas: ["Side Sleepers", "Back Sensitive Users", "Beginners"],
+                negative: ["Yoga/Meditation", "Massage Bed"]
+            },
+            {
+                theme: "Firmness & Support",
+                subtheme: "Firmness/Zoned Support",
+                keywords: ["firmness", "medium-firm", "zoned support", "targeted support"],
+                positions: ["Title", "PDP A+", "FAQ", "PR"],
+                personas: ["Medium-Firm Preference", "Spinal Alignment Needs"],
+                negative: ["Stone Bed", "Extreme Hard Bed Terms"]
+            },
+            {
+                theme: "Pressure Relief",
+                subtheme: "Shoulder/Back/Hip",
+                keywords: ["pressure relief", "shoulder/hip relief", "spinal alignment"],
+                positions: ["FAQ", "Blog", "JSON-LD"],
+                personas: ["Office Workers", "Athletic Recovery"],
+                negative: ["Medical Device Claims", "Absolute Therapeutic Terms"]
+            },
+            {
+                theme: "Cooling & Temperature",
+                subtheme: "Cool/Breathable/Heat Transfer",
+                keywords: ["cooling gel", "breathable", "heat dissipation", "temperature neutral"],
+                positions: ["Title", "Shorts", "FAQ", "PDP A+"],
+                personas: ["Hot Sleepers", "Tropical/Summer Users"],
+                negative: ["AC/Cooling Equipment Terms"]
+            },
+            {
+                theme: "Motion Isolation",
+                subtheme: "Partner Disturbance",
+                keywords: ["motion isolation", "partner disturbance", "vibration damping"],
+                positions: ["Title", "Comparison Page", "FAQ", "Reddit"],
+                personas: ["Couples", "Light Sleepers"],
+                negative: ["Noise Cancelling", "Soundproofing Materials"]
+            }
+        ];
+
+        // Initialize Charts
+        function initCharts() {
+            // Theme Distribution Chart
+            const themeChart = echarts.init(document.getElementById('themeDistributionChart'));
+            const themeData = [
+                { value: 3, name: 'Sleep Position' },
+                { value: 4, name: 'Support & Firmness' },
+                { value: 3, name: 'Comfort Features' },
+                { value: 2, name: 'Materials' },
+                { value: 2, name: 'Health & Safety' },
+                { value: 3, name: 'Purchase Experience' },
+                { value: 3, name: 'Maintenance' }
+            ];
+
+            const themeOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    textStyle: { color: '#a8b2d1' }
+                },
+                series: [{
+                    name: 'Theme Distribution',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#1a1a2e',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '20',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: { show: false },
+                    data: themeData
+                }],
+                color: ['#4facfe', '#43e97b', '#fa709a', '#fee140', '#30cfd0', '#f093fb', '#667eea']
+            };
+
+            themeChart.setOption(themeOption);
+
+            // Position Heatmap Chart
+            const heatmapChart = echarts.init(document.getElementById('positionHeatmapChart'));
+            const positions = ['Title', 'FAQ', 'Blog', 'PDP', 'Reddit', 'JSON-LD', 'PR', 'Shorts'];
+            const themes = ['Sleep Position', 'Firmness', 'Pressure Relief', 'Cooling', 'Motion'];
+            
+            const heatmapData = [];
+            for (let i = 0; i < themes.length; i++) {
+                for (let j = 0; j < positions.length; j++) {
+                    heatmapData.push([j, i, Math.floor(Math.random() * 10 + 5)]);
+                }
+            }
+
+            const heatmapOption = {
+                tooltip: {
+                    position: 'top'
+                },
+                grid: {
+                    height: '70%',
+                    top: '15%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: positions,
+                    splitArea: { show: true },
+                    axisLabel: { color: '#a8b2d1', rotate: 45 }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: themes,
+                    splitArea: { show: true },
+                    axisLabel: { color: '#a8b2d1' }
+                },
+                visualMap: {
+                    min: 0,
+                    max: 15,
+                    calculable: true,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: '5%',
+                    textStyle: { color: '#a8b2d1' },
+                    inRange: {
+                        color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#fee090', '#fdae61', '#f46d43', '#d73027']
+                    }
+                },
+                series: [{
+                    name: 'Keyword Usage',
+                    type: 'heatmap',
+                    data: heatmapData,
+                    label: { show: true },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }]
+            };
+
+            heatmapChart.setOption(heatmapOption);
+
+            // Target Persona Chart
+            const personaChart = echarts.init(document.getElementById('personaChart'));
+            const personaData = [
+                { name: 'Side Sleepers', value: 25 },
+                { name: 'Office Workers', value: 20 },
+                { name: 'Couples', value: 18 },
+                { name: 'Hot Sleepers', value: 15 },
+                { name: 'Back Pain Sufferers', value: 12 },
+                { name: 'Athletes', value: 10 }
+            ];
+
+            const personaOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}: {c}%'
+                },
+                series: [{
+                    type: 'treemap',
+                    data: personaData,
+                    label: {
+                        show: true,
+                        formatter: '{b}\n{c}%',
+                        fontSize: 14
+                    },
+                    itemStyle: {
+                        gapWidth: 2,
+                        borderWidth: 2
+                    },
+                    breadcrumb: {
+                        show: false
+                    },
+                    roam: false,
+                    nodeClick: false,
+                    levels: [{
+                        colorSaturation: [0.35, 0.5],
+                        itemStyle: {
+                            gapWidth: 1,
+                            borderWidth: 0
+                        }
+                    }]
+                }],
+                color: ['#4facfe', '#43e97b', '#fa709a', '#fee140', '#30cfd0', '#f093fb']
+            };
+
+            personaChart.setOption(personaOption);
+
+            // Keyword Cloud Chart
+            const cloudChart = echarts.init(document.getElementById('keywordCloudChart'));
+            const keywords = [
+                { name: 'memory foam', value: 150 },
+                { name: 'cooling gel', value: 140 },
+                { name: 'motion isolation', value: 130 },
+                { name: 'pressure relief', value: 125 },
+                { name: 'side sleeper', value: 120 },
+                { name: 'firmness', value: 115 },
+                { name: 'hybrid', value: 110 },
+                { name: 'breathable', value: 105 },
+                { name: 'spinal alignment', value: 100 },
+                { name: 'edge support', value: 95 },
+                { name: 'temperature neutral', value: 90 },
+                { name: 'zoned support', value: 85 },
+                { name: 'CertiPUR-US', value: 80 },
+                { name: 'trial period', value: 75 },
+                { name: 'free shipping', value: 70 }
+            ];
+
+            const cloudOption = {
+                tooltip: {},
+                series: [{
+                    type: 'wordCloud',
+                    shape: 'circle',
+                    keepAspect: false,
+                    left: 'center',
+                    top: 'center',
+                    width: '90%',
+                    height: '90%',
+                    right: null,
+                    bottom: null,
+                    sizeRange: [12, 60],
+                    rotationRange: [-90, 90],
+                    rotationStep: 45,
+                    gridSize: 8,
+                    drawOutOfBound: false,
+                    layoutAnimation: true,
+                    textStyle: {
+                        fontFamily: 'sans-serif',
+                        fontWeight: 'bold',
+                        color: function () {
+                            return 'rgb(' + [
+                                Math.round(Math.random() * 160 + 95),
+                                Math.round(Math.random() * 160 + 95),
+                                Math.round(Math.random() * 160 + 95)
+                            ].join(',') + ')';
+                        }
+                    },
+                    emphasis: {
+                        textStyle: {
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    data: keywords
+                }]
+            };
+
+            cloudChart.setOption(cloudOption);
+
+            // Sleep Scenario Coverage Chart
+            const scenarioChart = echarts.init(document.getElementById('scenarioCoverageChart'));
+            const scenarioOption = {
+                radar: {
+                    indicator: [
+                        { name: 'Side Sleeping', max: 100 },
+                        { name: 'Back Sleeping', max: 100 },
+                        { name: 'Stomach Sleeping', max: 100 },
+                        { name: 'Hot Sleepers', max: 100 },
+                        { name: 'Light Sleepers', max: 100 },
+                        { name: 'Couples', max: 100 }
+                    ],
+                    axisName: {
+                        color: '#a8b2d1'
+                    }
+                },
+                tooltip: {},
+                series: [{
+                    name: 'Coverage',
+                    type: 'radar',
+                    data: [
+                        {
+                            value: [95, 85, 70, 90, 88, 92],
+                            name: 'Current Coverage',
+                            areaStyle: {
+                                color: new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
+                                    { color: '#4facfe', offset: 0 },
+                                    { color: '#00f2fe', offset: 1 }
+                                ])
+                            }
+                        }
+                    ]
+                }]
+            };
+
+            scenarioChart.setOption(scenarioOption);
+
+            // Negative Keywords Chart
+            const negativeChart = echarts.init(document.getElementById('negativeKeywordsChart'));
+            const negativeData = [
+                { value: 25, name: 'Medical Claims' },
+                { value: 20, name: 'Competitor Brands' },
+                { value: 15, name: 'Extreme Terms' },
+                { value: 12, name: 'Equipment Terms' },
+                { value: 10, name: 'Chemical Terms' },
+                { value: 8, name: 'Adult Content' },
+                { value: 10, name: 'Other Categories' }
+            ];
+
+            const negativeOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}: {c} keywords'
+                },
+                series: [{
+                    type: 'funnel',
+                    left: '10%',
+                    top: 60,
+                    bottom: 60,
+                    width: '80%',
+                    min: 0,
+                    max: 100,
+                    minSize: '0%',
+                    maxSize: '100%',
+                    sort: 'descending',
+                    gap: 2,
+                    label: {
+                        show: true,
+                        position: 'inside'
+                    },
+                    labelLine: {
+                        length: 10,
+                        lineStyle: {
+                            width: 1,
+                            type: 'solid'
+                        }
+                    },
+                    itemStyle: {
+                        borderColor: '#fff',
+                        borderWidth: 1
+                    },
+                    emphasis: {
+                        label: {
+                            fontSize: 20
+                        }
+                    },
+                    data: negativeData
+                }],
+                color: ['#d73027', '#f46d43', '#fdae61', '#fee090', '#abd9e9', '#74add1', '#4575b4']
+            };
+
+            negativeChart.setOption(negativeOption);
+
+            // Populate keyword table
+            const tableBody = document.getElementById('keywordTableBody');
+            const topKeywords = [
+                { theme: 'Motion Isolation', keywords: 'motion isolation, partner disturbance', position: 'Title, FAQ', persona: 'Couples', score: 95 },
+                { theme: 'Cooling Technology', keywords: 'cooling gel, breathable', position: 'Title, PDP A+', persona: 'Hot Sleepers', score: 92 },
+                { theme: 'Pressure Relief', keywords: 'pressure relief, spinal alignment', position: 'FAQ, Blog', persona: 'Office Workers', score: 90 },
+                { theme: 'Sleep Position', keywords: 'side sleeper, back sleeper', position: 'Title, JSON-LD', persona: 'All Sleepers', score: 88 },
+                { theme: 'Edge Support', keywords: 'edge support, reinforced perimeter', position: 'Shorts, FAQ', persona: 'Active Sleepers', score: 85 }
+            ];
+
+            topKeywords.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.theme}</td>
+                    <td>${row.keywords}</td>
+                    <td>${row.position}</td>
+                    <td>${row.persona}</td>
+                    <td><span style="color: ${row.score >= 90 ? '#43e97b' : '#fee140'}">${row.score}</span></td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                themeChart.resize();
+                heatmapChart.resize();
+                personaChart.resize();
+                cloudChart.resize();
+                scenarioChart.resize();
+                negativeChart.resize();
+            });
+        }
+
+        // Initialize all charts when page loads
+        initCharts();
+    </script>
+</body>
+</html>

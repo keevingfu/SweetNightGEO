@@ -1259,12 +1259,12 @@
     // Build AI prompt
     function buildAIPrompt(assetType, question, answer) {
       const prompts = {
-        faq: `As a mattress industry and AI search optimization expert, analyze the following FAQ content for SweetNight mattresses:
+        faq: `As a mattress industry and search engine optimization expert, analyze the following FAQ content for SweetNight mattresses:
 Question: ${question || 'Not filled'}
 Answer: ${answer || 'Not filled'}
 
 Please provide 3-5 specific improvement suggestions focusing on:
-1. AI search optimization - making content easily citable by ChatGPT, Google AI, and Perplexity
+1. Search engine optimization - making content easily citable by ChatGPT, Google, and Perplexity
 2. Technical accuracy about CoolNest™, Contouring Curve™, or 5-Zone Support features
 3. Addressing hot sleeping, back pain, or value comparison pain points
 4. Including structured data opportunities (specifications, comparisons, evidence)
@@ -1298,7 +1298,7 @@ Provide suggestions focusing on:
 2. Highlighting SweetNight's value proposition and price-performance ratio
 3. Technical feature comparisons (cooling, support, durability)
 4. Data accuracy and third-party validation opportunities
-5. AI search optimization for comparison queries
+5. Search engine optimization for comparison queries
 
 Return suggestions in JSON format.`,
         

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SweetNight - AI Search Optimization Dashboard</title>
+    <title>SweetNight - Search Engine Optimization Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <script>
@@ -503,8 +503,8 @@
         <!-- Header -->
         <header class="header">
             <i class="fas fa-bars mobile-menu-toggle" onclick="toggleMobileMenu()"></i>
-            <h1>SweetNight AI Search Intelligence Center</h1>
-            <span style="font-size: 14px; color: #94a3b8; margin-left: 10px;">Generative Engine Optimization (GEO) Platform</span>
+            <h1>SweetNight GEO Content Platform</h1>
+            <span style="font-size: 14px; color: #94a3b8; margin-left: 10px;">Generative Engine Optimization for Mattress Content</span>
             <div class="header-right">
                 <div class="notification-icon" onclick="window.location.href='06b-notification-center.html'">
                     <i class="fas fa-bell"></i>
@@ -710,12 +710,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link" onclick="loadPage('05g_seo_performance.html')">
-                                <i class="fas fa-globe"></i>
-                                <span>SEO Performance</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="#" class="nav-link" onclick="loadPage('05h-reddit-youtube-monitor.html')">
                                 <i class="fas fa-video"></i>
                                 <span>Reddit/YouTube Monitor</span>
@@ -725,6 +719,40 @@
                             <a href="#" class="nav-link" onclick="loadPage('05i-reddit-performance-dashboard.html')">
                                 <i class="fab fa-reddit"></i>
                                 <span>Reddit Performance Dashboard</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Keyword Strategy -->
+                <li class="nav-item nav-item-parent">
+                    <a class="nav-link" onclick="toggleSubmenu(this)">
+                        <i class="fas fa-key"></i>
+                        <span>Keyword Strategy</span>
+                    </a>
+                    <ul class="nav-submenu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="loadPage('05l-mattress-keyword-strategy.html')">
+                                <i class="fas fa-tags"></i>
+                                <span>Keyword Strategy Analysis</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="loadPage('05m-jsonld-content-strategy.html')">
+                                <i class="fas fa-code"></i>
+                                <span>JSON-LD Content Strategy</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="loadPage('05n-competitor-keyword-analysis.html')">
+                                <i class="fas fa-chess"></i>
+                                <span>Competitor Keyword Analysis</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="loadPage('05g_seo_performance.html')">
+                                <i class="fas fa-globe"></i>
+                                <span>SEO Performance</span>
                             </a>
                         </li>
                     </ul>
@@ -784,9 +812,9 @@
                 <!-- Welcome Screen -->
                 <div class="welcome-screen" id="welcome-content">
                     <i class="fas fa-bed welcome-icon"></i>
-                    <h2 class="welcome-title">SweetNight AI Search Intelligence Dashboard</h2>
+                    <h2 class="welcome-title">SweetNight Search Engine Intelligence Dashboard</h2>
                     <p class="welcome-subtitle">
-                        Real-time AI search optimization for SweetNight mattresses. Track visibility across ChatGPT, Perplexity, Claude, and other AI platforms.
+                        Real-time search engine optimization for SweetNight mattresses. Track visibility across ChatGPT, Perplexity, Claude, and other platforms.
                         Monitor brand performance, content optimization, and customer engagement metrics.
                     </p>
                     
